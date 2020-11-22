@@ -72,8 +72,8 @@ class Owner(models.Model):
 class Item(models.Model):
 	name = models.TextField()
 	description = models.TextField(blank=True, verbose_name=_('description'))
-	business_area = models.ForeignKey(BusinessArea, verbose_name=_('business area'))
-	category = models.ForeignKey(Category, verbose_name=_('category'))
+	business_area = models.ForeignKey(BusinessArea, on_delete=models.PROTECT, verbose_name=_('business area'))
+	category = models.ForeignKey(Category, on_delete=models.PROTECT, verbose_name=_('category'))
 	decommissioned = models.BooleanField(verbose_name=_('decommissioned'),default=False)
 	targetQuantity = models.IntegerField(blank=True, null=True, verbose_name=_('target quantity'))
 	depreciation = models.BooleanField(verbose_name=_('deprecation'),default=False)
@@ -121,7 +121,7 @@ class Item(models.Model):
 
 class Barcode(models.Model):
 	code = models.CharField(max_length=10,primary_key=True)
-	item = models.ForeignKey(Item)
+	item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
 	def __unicode__(self):
 		return "%s" % self.code
@@ -135,11 +135,11 @@ class Barcode(models.Model):
 		verbose_name_plural = _("barcodes")
 
 class Acquisition(models.Model):
-	item = models.ForeignKey(Item)
+	item = models.ForeignKey(Item, on_delete=models.CASCADE)
 	date = models.DateField()
 	amount = models.IntegerField()
 	unitPrice = models.IntegerField(blank=True, null=True)
-	kind = models.ForeignKey(AcquisitionType)
+	kind = models.ForeignKey(AcquisitionType, on_delete=models.PROTECT)
 
 	def __unicode__(self):
 		return "%s: %s (%sx)" % (self.date, self.item, self.amount)
@@ -149,7 +149,7 @@ class Acquisition(models.Model):
 		verbose_name_plural = _("acquisitions")
 
 class Elimination(models.Model):
-	item = models.ForeignKey(Item, verbose_name=_("Item"))
+	item = models.ForeignKey(Item, verbose_name=_("Item"), on_delete=models.CASCADE)
 	date = models.DateField(verbose_name=_("Date"))
 	revenue = models.IntegerField(verbose_name=_("Revenue"), help_text=_("Please use the following format: <em>Money in Cent</em>."))
 	reason = models.TextField(verbose_name=_("Reason"))
@@ -162,7 +162,7 @@ class Elimination(models.Model):
 		verbose_name_plural = _("eliminations")
 
 class Inventory(models.Model):
-	item = models.ForeignKey(Item)
+	item = models.ForeignKey(Item, on_delete=models.PROTECT)
 	date = models.DateField()
 	amount = models.IntegerField()
 
